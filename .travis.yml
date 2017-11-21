@@ -1,0 +1,16 @@
+language: node_js
+node_js: node
+dist: trusty
+sudo: required
+addons:
+  chrome: stable
+before_install:
+- openssl aes-256-cbc -K $encrypted_6150b215f348_key -iv $encrypted_6150b215f348_iv
+  -in .env.enc -out .env -d
+#deploy:
+#  provider: heroku
+#  on: master
+#  skip_cleanup: true
+#  app: xyz-custom-domain-proxy
+#  api_key:
+#    secure: ezo32o+dbSA/eZpWs60WJktUVTIuSV6QF2yr8pJoUbvV/RiXEd0kYzz6pYmV3589+sd31mVMw5cGKSVY5jJQvHpv8DiJrLfYO4c8v5xmka4dTuEnPpIDJu963/019XXKdXPDWD232qf3pMdnL4mS4o+74xPG4NgrlbnkO+EYNPuCIRsoC2XG+TIqdlmbUXFDJY2G/W6Q2n259Ey22M20qFOUC/Pyna6k//QhqMuloH5f9PLgjvSkhgZxj2yqC+ue83BHRoKpom+FnhEx8nbvP+bzVIOmCLtpQoAcVDSxEs3UTpNDV3DQkwzvsh5ODC07uUqT17dIffG7mo3DsDP1jyhoFtT8c2vngiN7RZcvGQgJZLkrQgaeoGNxJ+BlPhxIq8/mj1gqjwgSlzPvDykGUeWvRgsEuodJh/CAh6D+CWn/8hB2VPm1/66OWLtBQgKlR/WEd/2CoU/y11h4XyOmVMyvSm04qca+ULzlYbIw2pdbQmnifEdKvivL1A51SluyOKa30Z5WafyY99rcaqx+FgsXWTo6/1vpamXtwXKEb5TNWLcl91O4JBm91kFxjA2kNMn0FR2170FxDB8DNH/sFiUG6H/5FjTOo0ZzACIxXz36td2ssEHXZC8RsyTywqNsEHFYCcrL8KKQmM7V/mqad8L6zKrqz1jFxq744KIANBQ=
