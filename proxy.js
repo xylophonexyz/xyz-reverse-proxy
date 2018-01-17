@@ -126,13 +126,18 @@ class ProxyServer {
       if (siteData.landingPageId) {
         ProxyServer._didGetLandingPageId(req, res, siteData.landingPageId);
       } else {
+        // if no result is produced in a reasonable amount of time, quit
+        const timeout = setTimeout(() => {
+          throw new Error('Failed to find landing page associated with this host');
+        }, 5000);
         // lookup the first page of the site associated with this host
-        getLandingPageId(this._apiEndpoint, siteData.siteId, this._token.raw.access_token).then(pageId => {
-          this._db.hset(req.headers.host, 'landingPageId', pageId, err => {
+        getLandingPageId(this._apiEndpoint, siteData.siteId, this._token.raw.access_token).then(landingPageId => {
+          this._db.hset(req.headers.host, 'landingPageId', landingPageId, err => {
             if (err) {
               throw err;
             }
-            ProxyServer._didGetLandingPageId(req, res, pageId);
+            ProxyServer._didGetLandingPageId(req, res, landingPageId);
+            clearTimeout(timeout);
           });
         }).catch(err => {
           throw err;
