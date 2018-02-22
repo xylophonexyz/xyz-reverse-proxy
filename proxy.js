@@ -13,7 +13,7 @@ const getLandingPageId = require('./helpers').getLandingPageId;
 class ProxyServer {
 
   static _isPassThroughRequest(url) {
-    return /(^\/p\/\d+)|(.js$)|(.css$)|(.ico$)|(.png$)|(.jpg$)|(.svg$)|(^\/api\/*)|(^\/404$)|(^\/500$)/.test(url);
+    return /(\w+-\d+$)|(^\/p\/\d+)|(.js$)|(.css$)|(.ico$)|(.png$)|(.jpg$)|(.svg$)|(^\/api\/*)|(^\/404$)|(^\/500$)/.test(url);
   }
 
   static _doRedirect(res, target) {
