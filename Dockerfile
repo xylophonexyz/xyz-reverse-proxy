@@ -1,7 +1,6 @@
 FROM node:alpine
 WORKDIR /root/xyz-url-rewrite-proxy
 COPY .env package.json package-lock.json ./
-RUN npm rebuild node-sass
 RUN npm install
 COPY . .
 EXPOSE 8080
