@@ -6,7 +6,6 @@ const oauth2 = require('simple-oauth2');
 const fs = require('fs');
 const getLandingPageId = require('./helpers').getLandingPageId;
 const getSite = require('./helpers').getSite;
-const Rx = require('rxjs');
 
 /**
  * Handles the legwork in sniffing a request and deciding whether it should be proxied to the final target,
@@ -139,17 +138,17 @@ class ProxyServer {
           if (site.metadata && site.metadata.customDomain) {
             domainMappings = site.metadata.customDomain.domainMappings;
           }
-          Rx.Observable.from(domainMappings).concatMap(mapping => {
-            const key = `${mapping ? (mapping + '.') : ''}${req.headers.host}`;
-            return Rx.Observable.fromPromise(new Promise((resolve, reject) => {
+          Promise.all(domainMappings.map(mapping => {
+            return new Promise((resolve, reject) => {
+              const key = `${mapping ? (mapping + '.') : ''}${req.headers.host}`;
               this._db.hset(key, 'landingPageId', landingPageId, err => {
                 if (err) {
                   reject(err);
                 }
                 resolve();
               });
-            }));
-          }).subscribe(() => {
+            })
+          })).then(() => {
             ProxyServer._didGetLandingPageId(req, res, landingPageId);
             clearTimeout(timeout);
           });
