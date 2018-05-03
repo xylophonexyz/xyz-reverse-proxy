@@ -1,4 +1,4 @@
-FROM node:alpine
+FROM node:boron
 WORKDIR /root/xyz-url-rewrite-proxy
 COPY .env package.json package-lock.json ./
 RUN npm install

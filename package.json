@@ -15,7 +15,6 @@
     "http-proxy": "^1.17.0",
     "lodash": "^4.17.10",
     "morgan": "~1.8.1",
-    "node-sass-middleware": "0.9.8",
     "redis": "^2.8.0",
     "request": "^2.85.0",
     "serve-favicon": "^2.4.5",
