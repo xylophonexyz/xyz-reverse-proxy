@@ -1,5 +1,3 @@
-import {getSite} from "./helpers";
-
 const http = require('http');
 const https = require('https');
 const httpProxy = require('http-proxy');
@@ -10,6 +8,7 @@ const concatMap = require('rxjs/operators/concatMap');
 const from = require('rxjs/observable/from');
 const fromPromise = require('rxjs/observable/fromPromise');
 const getLandingPageId = require('./helpers').getLandingPageId;
+const getSite = require('./helpers').getSite;
 
 /**
  * Handles the legwork in sniffing a request and deciding whether it should be proxied to the final target,
