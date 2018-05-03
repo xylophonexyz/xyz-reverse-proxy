@@ -129,15 +129,18 @@ class ProxyServer {
       } else {
         // if no result is produced in a reasonable amount of time, quit
         const timeout = setTimeout(() => {
-          throw new Error('Failed to find landing page associated with this host');
+          ProxyServer._handle500Error(req, res, 'Failed to find landing page associated with this host');
         }, 5000);
         // lookup the first page of the site associated with this host
         getSite(this._apiEndpoint, siteData.siteId, this._token.raw.access_token).then(site => {
           const landingPageId = getLandingPageId(site);
           let domainMappings = ['', 'www'];
-          if (site.metadata && site.metadata.customDomain) {
+          if (site.metadata && site.metadata.customDomain && site.metadata.customDomain.domainMappings) {
             domainMappings = site.metadata.customDomain.domainMappings;
           }
+          // clear the timeout
+          clearTimeout(timeout);
+          // set each domainMapping we know about in the database
           Promise.all(domainMappings.map(mapping => {
             return new Promise((resolve, reject) => {
               const key = `${mapping ? (mapping + '.') : ''}${req.headers.host}`;
@@ -150,10 +153,11 @@ class ProxyServer {
             })
           })).then(() => {
             ProxyServer._didGetLandingPageId(req, res, landingPageId);
-            clearTimeout(timeout);
+          }).catch(err => {
+            ProxyServer._handle500Error(req, res, err.message);
           });
         }).catch(err => {
-          throw err;
+          ProxyServer._handle500Error(req, res, err.message);
         });
       }
     } else {
