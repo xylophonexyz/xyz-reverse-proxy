@@ -1,9 +1,14 @@
+import {getSite} from "./helpers";
+
 const http = require('http');
 const https = require('https');
 const httpProxy = require('http-proxy');
 const redis = require('redis');
 const oauth2 = require('simple-oauth2');
 const fs = require('fs');
+const concatMap = require('rxjs/operators/concatMap');
+const from = require('rxjs/observable/from');
+const fromPromise = require('rxjs/observable/fromPromise');
 const getLandingPageId = require('./helpers').getLandingPageId;
 
 /**
@@ -131,11 +136,23 @@ class ProxyServer {
           throw new Error('Failed to find landing page associated with this host');
         }, 5000);
         // lookup the first page of the site associated with this host
-        getLandingPageId(this._apiEndpoint, siteData.siteId, this._token.raw.access_token).then(landingPageId => {
-          this._db.hset(req.headers.host, 'landingPageId', landingPageId, err => {
-            if (err) {
-              throw err;
-            }
+        getSite(this._apiEndpoint, siteData.siteId, this._token.raw.access_token).then(site => {
+          const landingPageId = getLandingPageId(site);
+          let domainMappings = ['', 'www'];
+          if (site.metadata && site.metadata.customDomain) {
+            domainMappings = site.metadata.customDomain.domainMappings;
+          }
+          from(domainMappings).pipe(concatMap(mapping => {
+            const key = `${mapping ? (mapping + '.') : ''}${req.headers.host}`;
+            return fromPromise(new Promise((resolve, reject) => {
+              this._db.hset(key, 'landingPageId', landingPageId, err => {
+                if (err) {
+                  reject(err);
+                }
+                resolve();
+              });
+            }));
+          })).subscribe(() => {
             ProxyServer._didGetLandingPageId(req, res, landingPageId);
             clearTimeout(timeout);
           });

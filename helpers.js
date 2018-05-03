@@ -1,7 +1,7 @@
 const request = require('request');
 const _ = require('lodash');
 
-function getLandingPageId(apiEndpoint, siteId, accessToken) {
+function getSite(apiEndpoint, siteId, accessToken) {
   return new Promise((resolve, reject) => {
     const headers = {Authorization: `Bearer ${accessToken}`};
     request({
@@ -13,8 +13,7 @@ function getLandingPageId(apiEndpoint, siteId, accessToken) {
       } else {
         try {
           const body = JSON.parse(response.body);
-          const pages = _.sortBy(_.filter(body.pages, ['metadata.navigationItem', true]), 'metadata.index');
-          resolve(pages[0] ? pages[0].id : null);
+          resolve(body);
         } catch (err) {
           reject(err);
         }
@@ -23,4 +22,9 @@ function getLandingPageId(apiEndpoint, siteId, accessToken) {
   });
 }
 
-module.exports = {getLandingPageId};
+function getLandingPageId(site) {
+  const pages = _.sortBy(_.filter(site.pages, ['metadata.navigationItem', true]), 'metadata.index');
+  return pages[0] ? pages[0].id : null;
+}
+
+module.exports = {getLandingPageId, getSite};
