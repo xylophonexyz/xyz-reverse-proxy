@@ -4,9 +4,8 @@ const httpProxy = require('http-proxy');
 const redis = require('redis');
 const oauth2 = require('simple-oauth2');
 const fs = require('fs');
-const concatMap = require('rxjs/operators/concatMap');
-const from = require('rxjs/observable/from');
-const fromPromise = require('rxjs/observable/fromPromise');
+const {fromPromise, from} = require('rxjs/observable');
+const {concatMap} = require('rxjs/operators');
 const getLandingPageId = require('./helpers').getLandingPageId;
 const getSite = require('./helpers').getSite;
 
